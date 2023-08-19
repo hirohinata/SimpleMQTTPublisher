@@ -19,10 +19,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Core\ControlPacketFormat.c" />
+    <ClCompile Include="Core\DataType.c" />
     <ClCompile Include="SimpleMQTTPublisher.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMQTTPublisher.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Core\ControlPacketFormat.h" />
+    <ClInclude Include="Core\DataType.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

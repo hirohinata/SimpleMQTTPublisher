@@ -3,6 +3,7 @@
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="DataTypeTest.cpp" />
+    <ClCompile Include="ControlPacketFormatTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

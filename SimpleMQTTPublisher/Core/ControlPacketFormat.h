@@ -28,12 +28,13 @@ typedef enum
 /* 2.1.3 Flags */
 typedef unsigned char MQTT_ControlPacketFlags;
 
-MQTT_ControlPacketFlags MQTT_ConstructPublishControlPacketFlags(
+int MQTT_EncodePublishControlPacketFlags(
     unsigned char dup,
     unsigned char qos,
-    unsigned char retain);
+    unsigned char retain,
+    MQTT_ControlPacketFlags* pFlags);
 
-void MQTT_DeconstructPublishControlPacketFlags(
+int MQTT_DecodePublishControlPacketFlags(
     MQTT_ControlPacketFlags flags,
     unsigned char* pDup,
     unsigned char* pQos,

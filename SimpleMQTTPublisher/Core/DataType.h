@@ -46,12 +46,12 @@ typedef struct
     int EncodedByteNum;
 } MQTT_VariableByteInteger;
 
-void MQTT_EncodeVariableByteInteger(
+int MQTT_EncodeVariableByteInteger(
     unsigned int value,
     MQTT_VariableByteInteger* pVariableByteInteger);
 
-void MQTT_DecodeVariableByteInteger(
-    unsigned char* pBuffer,
+int MQTT_DecodeVariableByteInteger(
+    const unsigned char* pBuffer,
     MQTT_VariableByteInteger* pVariableByteInteger);
 
 /* 1.5.6 Binary Data */

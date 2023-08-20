@@ -1,6 +1,6 @@
 #include "DataType.h"
 
-void MQTT_EncodeVariableByteInteger(
+int MQTT_EncodeVariableByteInteger(
     unsigned int value,
     MQTT_VariableByteInteger* pVariableByteInteger)
 {
@@ -13,6 +13,8 @@ void MQTT_EncodeVariableByteInteger(
 
     do {
         const int index = pVariableByteInteger->EncodedByteNum;
+        if (4 <= index) return -1;
+
         pVariableByteInteger->EncodedByte[index] = value % 128;
         value = value / 128;
 
@@ -24,10 +26,12 @@ void MQTT_EncodeVariableByteInteger(
 
         ++pVariableByteInteger->EncodedByteNum;
     } while (0 < value);
+
+    return 0;
 }
 
-void MQTT_DecodeVariableByteInteger(
-    unsigned char* pBuffer,
+int MQTT_DecodeVariableByteInteger(
+    const unsigned char* pBuffer,
     MQTT_VariableByteInteger* pVariableByteInteger)
 {
     unsigned int multiplier = 1;
@@ -43,10 +47,16 @@ void MQTT_DecodeVariableByteInteger(
     do
     {
         encodedByte = *pBuffer;
+        if (encodedByte == 0 && 1 < multiplier) return -1;
+
         pVariableByteInteger->EncodedByte[pVariableByteInteger->EncodedByteNum] = encodedByte;
         pVariableByteInteger->Value += (encodedByte & 127) * multiplier;
         multiplier *= 128;
         ++pBuffer;
         ++pVariableByteInteger->EncodedByteNum;
+
+        if (4 < pVariableByteInteger->EncodedByteNum) return -1;
     } while ((encodedByte & 128) != 0);
+
+    return 0;
 }

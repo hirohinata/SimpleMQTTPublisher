@@ -19,9 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Core\ConnectionRequest.c" />
     <ClCompile Include="Core\ControlPacketFormat.c" />
     <ClCompile Include="Core\DataType.c" />
-    <ClCompile Include="SimpleMQTTPublisher.c" />
+    <ClCompile Include="SimpleMQTTPublisher.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMQTTPublisher.def" />

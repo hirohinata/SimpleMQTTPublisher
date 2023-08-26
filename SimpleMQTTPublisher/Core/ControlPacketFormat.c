@@ -8,7 +8,7 @@ int MQTT_EncodePublishControlPacketFlags(
 {
     if (1 < dup || 3 < qos || 1 < retain) return -1;
 
-    // QoS 3 is reserved
+    /* QoS 3 is reserved */
     if (qos == 3) return -1;
 
     *pFlags =
@@ -30,7 +30,7 @@ int MQTT_DecodePublishControlPacketFlags(
     *pQos = (flags >> 1) & 0x3;
     *pRetain = (flags >> 0) & 0x1;
 
-    // QoS 3 is reserved
+    /* QoS 3 is reserved */
     if (*pQos == 3) return -1;
 
     return 0;

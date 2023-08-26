@@ -22,6 +22,14 @@ typedef struct
     unsigned char LSB;
 } MQTT_TwoByteInteger;
 
+int MQTT_EncodeTwoByteInteger(
+    unsigned int value,
+    MQTT_TwoByteInteger* pTwoByteInteger);
+
+int MQTT_DecodeTwoByteInteger(
+    const unsigned char* pBuffer,
+    MQTT_TwoByteInteger* pTwoByteInteger);
+
 /* 1.5.3 Four Byte Integer */
 typedef struct
 {
@@ -38,12 +46,14 @@ typedef struct
     unsigned char* pString;     /* UTF-8 encoded character data, if length > 0. */
 } MQTT_UTF8EncodedString;
 
+int MQTT_WriteUTF8EncodedString(const char* pszString, unsigned char** ppBuffer, unsigned int* pRestLength);
+
 /* 1.5.5 Variable Byte Integer */
 typedef struct
 {
     unsigned int Value;
     unsigned char EncodedByte[4];
-    int EncodedByteNum;
+    unsigned int EncodedByteNum;
 } MQTT_VariableByteInteger;
 
 int MQTT_EncodeVariableByteInteger(

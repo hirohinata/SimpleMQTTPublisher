@@ -24,22 +24,22 @@ int MQTT_DecodeTwoByteInteger(
     return 0;
 }
 
-int MQTT_WriteUTF8EncodedString(const char* pszString, unsigned char** ppBuffer, unsigned int* pRestLength)
+int MQTT_WriteUTF8EncodedString(const char* pszString, unsigned char* pBuffer, unsigned int dwBufferLength)
 {
     MQTT_TwoByteInteger protocolNameLength = { 0 };
     const unsigned int stringLength = (unsigned int)strlen(pszString);
 
     if (MQTT_EncodeTwoByteInteger(stringLength, &protocolNameLength)) return -1;
-    if (*pRestLength < 2 + stringLength) return -1;
 
-    memcpy(*ppBuffer, &protocolNameLength, 2);
-    *ppBuffer += 2;
+    if (pBuffer != NULL)
+    {
+        if (dwBufferLength < 2 + stringLength) return -1;
 
-    memcpy(*ppBuffer, pszString, stringLength);
-    *ppBuffer += stringLength;
+        memcpy(pBuffer, &protocolNameLength, 2);
+        memcpy(pBuffer + 2, pszString, stringLength);
+    }
 
-    *pRestLength -= 2 + stringLength;
-    return 0;
+    return 2 + stringLength;
 }
 
 int MQTT_EncodeVariableByteInteger(

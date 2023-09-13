@@ -46,7 +46,7 @@ typedef struct
     unsigned char* pString;     /* UTF-8 encoded character data, if length > 0. */
 } MQTT_UTF8EncodedString;
 
-int MQTT_WriteUTF8EncodedString(const char* pszString, unsigned char** ppBuffer, unsigned int* pRestLength);
+int MQTT_WriteUTF8EncodedString(const char* pszString, unsigned char* pBuffer, unsigned int dwBufferLength);
 
 /* 1.5.5 Variable Byte Integer */
 typedef struct

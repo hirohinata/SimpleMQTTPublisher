@@ -1,3 +1,5 @@
+#pragma once
+
 #pragma pack(1)
 
 typedef unsigned char MQTT_Byte;
@@ -46,7 +48,7 @@ typedef struct
     unsigned char* pString;     /* UTF-8 encoded character data, if length > 0. */
 } MQTT_UTF8EncodedString;
 
-int MQTT_WriteUTF8EncodedString(const char* pszString, unsigned char* pBuffer, unsigned int dwBufferLength);
+int MQTT_WriteNullTerminatedUTF8EncodedString(const char* pszString, unsigned char* pBuffer, unsigned int dwBufferLength);
 
 /* 1.5.5 Variable Byte Integer */
 typedef struct
@@ -70,6 +72,12 @@ typedef struct
     MQTT_TwoByteInteger Length;
     unsigned char* pData;       /* 0 to 65,535 Bytes */
 } MQTT_BinaryData;
+
+int MQTT_WriteBinaryData(
+    const unsigned char* pBinaryData,
+    unsigned short wBinaryDataLength,
+    unsigned char* pBuffer,
+    unsigned int dwBufferLength);
 
 /* 1.5.7 UTF-8 String Pair */
 typedef struct

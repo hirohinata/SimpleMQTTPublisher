@@ -13,7 +13,7 @@ static class Program
             System.IO.File.Copy("../../../../x64/Debug/SimpleMQTTPublisher.pdb", "SimpleMQTTPublisher.pdb", true);
 
             using var client = new MQTTPublisher();
-            client.Connect("test.mosquitto.org", 1883);
+            client.Connect("test.mosquitto.org", 1884);
         }
         catch (ArgumentNullException e)
         {

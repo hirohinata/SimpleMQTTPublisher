@@ -1,5 +1,6 @@
 #include "pch.h"
 
+#include <vector>
 #include "../SimpleMQTTPublisher/Core/DataType.c"
 
 static bool operator==(const MQTT_VariableByteInteger& lhs, const MQTT_VariableByteInteger& rhs)
@@ -29,31 +30,31 @@ namespace SimpleMQTTPublisherTest
     TEST_CLASS(DataTypeTest)
     {
     public:
-        TEST_METHOD(MQTT_WriteUTF8EncodedStringTest)
+        TEST_METHOD(MQTT_WriteNullTerminatedUTF8EncodedStringTest)
         {
-            unsigned char buffer[65537] = { 0 };
+            std::vector<unsigned char> buffer(65537, 0);
 
             // Consume (2 + StringLength) bytes. The 2 is for the string length.
-            Assert::AreEqual(2, MQTT_WriteUTF8EncodedString("", NULL, 0));
-            Assert::AreEqual(3, MQTT_WriteUTF8EncodedString("a", NULL, 0));
+            Assert::AreEqual(2, MQTT_WriteNullTerminatedUTF8EncodedString("", NULL, 0));
+            Assert::AreEqual(3, MQTT_WriteNullTerminatedUTF8EncodedString("a", NULL, 0));
 
             // The max string length is 65535.
-            Assert::AreEqual(65537, MQTT_WriteUTF8EncodedString(std::string(65535, 'a').c_str(), NULL, 0));
-            Assert::AreEqual(-1, MQTT_WriteUTF8EncodedString(std::string(65536, 'a').c_str(), NULL, 0));
+            Assert::AreEqual(65537, MQTT_WriteNullTerminatedUTF8EncodedString(std::string(65535, 'a').c_str(), NULL, 0));
+            Assert::AreEqual(-1, MQTT_WriteNullTerminatedUTF8EncodedString(std::string(65536, 'a').c_str(), NULL, 0));
 
             // The buffer length must be greater than or equal to (2 + StringLength).
-            Assert::AreEqual(-1, MQTT_WriteUTF8EncodedString("", buffer, 1));
-            Assert::AreEqual(2, MQTT_WriteUTF8EncodedString("", buffer, 2));
+            Assert::AreEqual(-1, MQTT_WriteNullTerminatedUTF8EncodedString("", buffer.data(), 1));
+            Assert::AreEqual(2, MQTT_WriteNullTerminatedUTF8EncodedString("", buffer.data(), 2));
             Assert::AreEqual((unsigned char)0, buffer[0]);
             Assert::AreEqual((unsigned char)0, buffer[1]);
 
-            Assert::AreEqual(-1, MQTT_WriteUTF8EncodedString("a", buffer, 2));
-            Assert::AreEqual(3, MQTT_WriteUTF8EncodedString("a", buffer, 3));
+            Assert::AreEqual(-1, MQTT_WriteNullTerminatedUTF8EncodedString("a", buffer.data(), 2));
+            Assert::AreEqual(3, MQTT_WriteNullTerminatedUTF8EncodedString("a", buffer.data(), 3));
             Assert::AreEqual((unsigned char)0, buffer[0]);
             Assert::AreEqual((unsigned char)1, buffer[1]);
             Assert::AreEqual((unsigned char)'a', buffer[2]);
 
-            Assert::AreEqual(65537, MQTT_WriteUTF8EncodedString(std::string(65535, 'a').c_str(), buffer, 65537));
+            Assert::AreEqual(65537, MQTT_WriteNullTerminatedUTF8EncodedString(std::string(65535, 'a').c_str(), buffer.data(), 65537));
             Assert::AreEqual((unsigned char)0xFF, buffer[0]);
             Assert::AreEqual((unsigned char)0xFF, buffer[1]);
             Assert::AreEqual((unsigned char)'a', buffer[65536]);

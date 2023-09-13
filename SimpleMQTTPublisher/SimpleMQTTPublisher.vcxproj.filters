@@ -27,5 +27,8 @@
     <ClInclude Include="Core\DataType.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="Core\ConnectionRequest.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

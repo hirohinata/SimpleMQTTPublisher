@@ -24,7 +24,7 @@ int MQTT_DecodeTwoByteInteger(
     return 0;
 }
 
-int MQTT_WriteUTF8EncodedString(const char* pszString, unsigned char* pBuffer, unsigned int dwBufferLength)
+int MQTT_WriteNullTerminatedUTF8EncodedString(const char* pszString, unsigned char* pBuffer, unsigned int dwBufferLength)
 {
     MQTT_TwoByteInteger protocolNameLength = { 0 };
     const unsigned int stringLength = (unsigned int)strlen(pszString);
@@ -105,4 +105,25 @@ int MQTT_DecodeVariableByteInteger(
     } while ((encodedByte & 128) != 0);
 
     return 0;
+}
+
+int MQTT_WriteBinaryData(
+    const unsigned char* pBinaryData,
+    unsigned short wBinaryDataLength,
+    unsigned char* pBuffer,
+    unsigned int dwBufferLength)
+{
+    MQTT_TwoByteInteger binaryDataLength = { 0 };
+
+    if (MQTT_EncodeTwoByteInteger(wBinaryDataLength, &binaryDataLength)) return -1;
+
+    if (pBuffer != NULL)
+    {
+        if (dwBufferLength < 2u + wBinaryDataLength) return -1;
+
+        memcpy(pBuffer, &binaryDataLength, 2);
+        memcpy(pBuffer + 2, pBinaryData, wBinaryDataLength);
+    }
+
+    return 2 + wBinaryDataLength;
 }

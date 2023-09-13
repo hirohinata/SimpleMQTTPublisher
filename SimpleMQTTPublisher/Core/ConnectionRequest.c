@@ -1,5 +1,8 @@
 #include <memory.h>
+#include "ConnectionRequest.h"
 #include "ControlPacketFormat.h"
+
+static const unsigned char MQTT_PROTOCOL_VERSION = 5;
 
 /* 3.1.1 CONNECT Fixed Header */
 static int MQTT_WriteConnectFixedHeader(unsigned char* pBuffer, unsigned int dwBufferLength, unsigned char** ppRemainingLengthField)
@@ -27,31 +30,34 @@ static int MQTT_WriteConnectFixedHeader(unsigned char* pBuffer, unsigned int dwB
 /* 3.1.2.1 Protocol Name */
 static int MQTT_WriteConnectProtocolName(unsigned char* pBuffer, unsigned int dwBufferLength)
 {
-    return MQTT_WriteUTF8EncodedString("MQTT", pBuffer, dwBufferLength);
+    return MQTT_WriteNullTerminatedUTF8EncodedString("MQTT", pBuffer, dwBufferLength);
 }
 
 /* 3.1.2.2 Protocol Version */
-static int MQTT_WriteConnectProtocolVersion(unsigned char version, unsigned char* pBuffer, unsigned int dwBufferLength)
+static int MQTT_WriteConnectProtocolVersion(unsigned char* pBuffer, unsigned int dwBufferLength)
 {
     if (dwBufferLength < 1) return -1;
 
     if (pBuffer != NULL)
     {
-        *pBuffer = version;
+        *pBuffer = MQTT_PROTOCOL_VERSION;
     }
 
     return 1;
 }
 
 /* 3.1.2.3 Connect Flags */
-static int MQTT_WriteConnectFlags(unsigned char* pBuffer, unsigned int dwBufferLength)
+static int MQTT_WriteConnectFlags(unsigned char* pBuffer, unsigned int dwBufferLength, const MQTT_ConnectPacketOption* pOption)
 {
     if (dwBufferLength < 1) return -1;
 
-    // TODO: set flags
     if (pBuffer != NULL)
     {
-        *pBuffer = 0;
+        /* TODO: Support Will Flag */
+        *pBuffer =
+            (pOption->pszUserName != NULL ? 0x80 : 0x00) |
+            (pOption->pPassword != NULL ? 0x40 : 0x00) |
+            (pOption->bCleanStart ? 0x02 : 0x00);
     }
 
     return 1;
@@ -92,42 +98,38 @@ static int MQTT_WriteConnectProperties(unsigned char* pBuffer, unsigned int dwBu
 }
 
 /* 3.1.2 CONNECT Variable Header */
-static int MQTT_WriteConnectVariableHeader(unsigned char* pBuffer, unsigned int dwBufferLength)
+static int MQTT_WriteConnectVariableHeader(unsigned char* pBuffer, unsigned int dwBufferLength, const MQTT_ConnectPacketOption* pOption)
 {
-    // TODO: Make it possible to set from outside
-    const unsigned char MQTT_PROTOCOL_VERSION = 5;
-    unsigned short wKeepAlive = 0;
-
     unsigned int dwRestLength = dwBufferLength;
 
     {
         const int iProtocolNameLength = MQTT_WriteConnectProtocolName(pBuffer, dwRestLength);
         if (iProtocolNameLength < 0) return -1;
-        pBuffer += iProtocolNameLength;
+        if (pBuffer != NULL) pBuffer += iProtocolNameLength;
         dwRestLength -= iProtocolNameLength;
     }
     {
-        const int iProtocolVersionLength = MQTT_WriteConnectProtocolVersion(MQTT_PROTOCOL_VERSION, pBuffer, dwRestLength);
+        const int iProtocolVersionLength = MQTT_WriteConnectProtocolVersion(pBuffer, dwRestLength);
         if (iProtocolVersionLength < 0) return -1;
-        pBuffer += iProtocolVersionLength;
+        if (pBuffer != NULL) pBuffer += iProtocolVersionLength;
         dwRestLength -= iProtocolVersionLength;
     }
     {
-        const int iFlagsLength = MQTT_WriteConnectFlags(pBuffer, dwRestLength);
+        const int iFlagsLength = MQTT_WriteConnectFlags(pBuffer, dwRestLength, pOption);
         if (iFlagsLength < 0) return -1;
-        pBuffer += iFlagsLength;
+        if (pBuffer != NULL) pBuffer += iFlagsLength;
         dwRestLength -= iFlagsLength;
     }
     {
-        const int iKeepAliveLength = MQTT_WriteConnectKeepAlive(wKeepAlive, pBuffer, dwRestLength);
+        const int iKeepAliveLength = MQTT_WriteConnectKeepAlive(pOption->wKeepAlive, pBuffer, dwRestLength);
         if (iKeepAliveLength < 0) return -1;
-        pBuffer += iKeepAliveLength;
+        if (pBuffer != NULL) pBuffer += iKeepAliveLength;
         dwRestLength -= iKeepAliveLength;
     }
     {
         const int iPropertiesLength = MQTT_WriteConnectProperties(pBuffer, dwRestLength);
         if (iPropertiesLength < 0) return -1;
-        pBuffer += iPropertiesLength;
+        if (pBuffer != NULL) pBuffer += iPropertiesLength;
         dwRestLength -= iPropertiesLength;
     }
 
@@ -137,31 +139,57 @@ static int MQTT_WriteConnectVariableHeader(unsigned char* pBuffer, unsigned int 
 /* 3.1.3.1 Client Identifier (ClientID) */
 static int MQTT_WriteConnectClientID(const char* pszClientID, unsigned char* pBuffer, unsigned int dwBufferLength)
 {
-    return MQTT_WriteUTF8EncodedString(pszClientID, pBuffer, dwBufferLength);
+    return MQTT_WriteNullTerminatedUTF8EncodedString(pszClientID, pBuffer, dwBufferLength);
+}
+
+/* 3.1.3.5 User Name */
+static int MQTT_WriteConnectUserName(const char* pszUserName, unsigned char* pBuffer, unsigned int dwBufferLength)
+{
+    if (pszUserName == NULL) return 0;
+    return MQTT_WriteNullTerminatedUTF8EncodedString(pszUserName, pBuffer, dwBufferLength);
+}
+
+/* 3.1.3.6 Password */
+static int MQTT_WriteConnectPassword(const unsigned char* pPassword, unsigned short wPasswordLength, unsigned char* pBuffer, unsigned int dwBufferLength)
+{
+    if (pPassword == NULL) return 0;
+    return MQTT_WriteBinaryData(pPassword, wPasswordLength, pBuffer, dwBufferLength);
 }
 
 /* 3.1.3 CONNECT Payload */
-static int MQTT_WriteConnectPayload(unsigned char* pBuffer, unsigned int dwBufferLength)
+static int MQTT_WriteConnectPayload(unsigned char* pBuffer, unsigned int dwBufferLength, const MQTT_ConnectPacketOption* pOption)
 {
     unsigned int dwRestLength = dwBufferLength;
 
     {
-        const int iClientIDLength = MQTT_WriteConnectClientID("SimpleMQTTPublisher", pBuffer, dwRestLength);
+        const int iClientIDLength = MQTT_WriteConnectClientID(pOption->pszClientID, pBuffer, dwRestLength);
         if (iClientIDLength < 0) return -1;
-        pBuffer += iClientIDLength;
+        if (pBuffer != NULL) pBuffer += iClientIDLength;
         dwRestLength -= iClientIDLength;
     }
-
-    // TODO: set other payload
+    /* TODO: Support Will Flag */
+    {
+        const int iUserNameLength = MQTT_WriteConnectUserName(pOption->pszUserName, pBuffer, dwRestLength);
+        if (iUserNameLength < 0) return -1;
+        if (pBuffer != NULL) pBuffer += iUserNameLength;
+        dwRestLength -= iUserNameLength;
+    }
+    {
+        const int iPasswordLength = MQTT_WriteConnectPassword(pOption->pPassword, pOption->wPasswordLength, pBuffer, dwRestLength);
+        if (iPasswordLength < 0) return -1;
+        if (pBuffer != NULL) pBuffer += iPasswordLength;
+        dwRestLength -= iPasswordLength;
+    }
 
     return dwBufferLength - dwRestLength;
 }
 
-int MQTT_CreateConnectPacket(unsigned char* pBuffer, unsigned int dwBufferLength)
+int MQTT_CreateConnectPacket(unsigned char* pBuffer, unsigned int dwBufferLength, const MQTT_ConnectPacketOption* pOption)
 {
     unsigned char* pRemainingLengthBuffer = NULL;
-    unsigned char* pBufferStart = pBuffer;
     unsigned int dwRestLength = dwBufferLength;
+
+    if (pOption == NULL) return -1;
 
     {
         const int iFixedHeaderLength = MQTT_WriteConnectFixedHeader(pBuffer, dwRestLength, &pRemainingLengthBuffer);
@@ -170,13 +198,13 @@ int MQTT_CreateConnectPacket(unsigned char* pBuffer, unsigned int dwBufferLength
         dwRestLength -= iFixedHeaderLength;
     }
     {
-        const int iVariableHeaderLength = MQTT_WriteConnectVariableHeader(pBuffer, dwRestLength);
+        const int iVariableHeaderLength = MQTT_WriteConnectVariableHeader(pBuffer, dwRestLength, pOption);
         if (iVariableHeaderLength < 0) return -1;
         if (pBuffer != NULL) pBuffer += iVariableHeaderLength;
         dwRestLength -= iVariableHeaderLength;
     }
     {
-        const int iPayloadLength = MQTT_WriteConnectPayload(pBuffer, dwRestLength);
+        const int iPayloadLength = MQTT_WriteConnectPayload(pBuffer, dwRestLength, pOption);
         if (iPayloadLength < 0) return -1;
         if (pBuffer != NULL) pBuffer += iPayloadLength;
         dwRestLength -= iPayloadLength;

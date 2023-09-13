@@ -28,6 +28,7 @@
     <None Include="SimpleMQTTPublisher.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Core\ConnectionRequest.h" />
     <ClInclude Include="Core\ControlPacketFormat.h" />
     <ClInclude Include="Core\DataType.h" />
   </ItemGroup>

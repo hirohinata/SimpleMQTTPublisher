@@ -1,6 +1,7 @@
 #include <memory.h>
 #include "ConnectionRequest.h"
 #include "ControlPacketFormat.h"
+#include "Utility.h"
 
 static const unsigned char MQTT_PROTOCOL_VERSION = 5;
 
@@ -212,21 +213,9 @@ int MQTT_CreateConnectPacket(unsigned char* pBuffer, unsigned int dwBufferLength
 
     /* Write Remaining Length */
     {
-        MQTT_VariableByteInteger remainingLength = { 0 };
-        unsigned int dwRemainingLength = dwBufferLength - dwRestLength - 2;
-
-        if (MQTT_EncodeVariableByteInteger(dwRemainingLength, &remainingLength)) return -1;
-        if (dwRestLength < remainingLength.EncodedByteNum - 1) return -1;
-
-        if (pRemainingLengthBuffer != NULL)
-        {
-            if (1 < remainingLength.EncodedByteNum)
-            {
-                memmove(pRemainingLengthBuffer + remainingLength.EncodedByteNum, pRemainingLengthBuffer + 1, dwRemainingLength);
-            }
-            memcpy(pRemainingLengthBuffer, remainingLength.EncodedByte, remainingLength.EncodedByteNum);
-        }
-        dwRestLength -= remainingLength.EncodedByteNum - 1;
+        int iAppendedByteNum = MQTT_WriteRemainingLength(pRemainingLengthBuffer, dwBufferLength, dwRestLength);
+        if (iAppendedByteNum < 0) return -1;
+        dwRestLength -= iAppendedByteNum;
     }
 
     return dwBufferLength - dwRestLength;

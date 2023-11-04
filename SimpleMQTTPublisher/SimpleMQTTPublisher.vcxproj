@@ -23,6 +23,8 @@
     <ClCompile Include="Core\ConnectionRequest.c" />
     <ClCompile Include="Core\ControlPacketFormat.c" />
     <ClCompile Include="Core\DataType.c" />
+    <ClCompile Include="Core\DisconnectNotification.c" />
+    <ClCompile Include="Core\Utility.c" />
     <ClCompile Include="SimpleMQTTPublisher.h" />
   </ItemGroup>
   <ItemGroup>
@@ -33,6 +35,8 @@
     <ClInclude Include="Core\ConnectionRequest.h" />
     <ClInclude Include="Core\ControlPacketFormat.h" />
     <ClInclude Include="Core\DataType.h" />
+    <ClInclude Include="Core\DisconnectNotification.h" />
+    <ClInclude Include="Core\Utility.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.FileIO;
+using System;
 using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
@@ -7,12 +8,12 @@ namespace SampleApp;
 
 internal class MQTTPublisher : IDisposable
 {
-    private readonly TcpClient tcpClient;
+    private readonly TcpClient _tcpClient;
     private bool _disposed;
 
     public MQTTPublisher()
     {
-        tcpClient = new TcpClient();
+        _tcpClient = new TcpClient();
     }
 
     protected virtual void Dispose(bool disposing)
@@ -21,7 +22,7 @@ internal class MQTTPublisher : IDisposable
         {
             if (disposing)
             {
-                using (tcpClient) {}
+                using (_tcpClient) {}
             }
 
             _disposed = true;
@@ -55,8 +56,8 @@ internal class MQTTPublisher : IDisposable
             bCleanStart = 0,
         };
 
-        tcpClient.Connect(hostname, port);
-        if (!tcpClient.Connected)
+        _tcpClient.Connect(hostname, port);
+        if (!_tcpClient.Connected)
         {
             return false;
         }
@@ -67,16 +68,16 @@ internal class MQTTPublisher : IDisposable
         int packetLength = NativeMethods.MQTT_CreateConnectPacket(pBuffer, dwBufferLength, ref option);
         if (packetLength <= 0)
         {
-            tcpClient.Close();
+            _tcpClient.Close();
             return false;
         }
 
-        tcpClient.GetStream().Write(pBuffer, 0, packetLength);
+        _tcpClient.GetStream().Write(pBuffer, 0, packetLength);
 
-        packetLength = tcpClient.GetStream().Read(pBuffer, 0, (int)dwBufferLength);
+        packetLength = _tcpClient.GetStream().Read(pBuffer, 0, (int)dwBufferLength);
         if (packetLength <= 0)
         {
-            tcpClient.Close();
+            _tcpClient.Close();
             return false;
         }
 
@@ -84,6 +85,24 @@ internal class MQTTPublisher : IDisposable
         int parseLength = NativeMethods.MQTT_ParseConnectAckPacket(pBuffer, (uint)packetLength, ref connAckResult);
         return packetLength == parseLength &&
             connAckResult.connectReasonCode == NativeMethods.MQTT_ConnectReasonCode.Success;
+    }
+
+    public bool Disconnect()
+    {
+        var dwBufferLength = 1024U;
+        var pBuffer = new Byte[dwBufferLength];
+
+        int packetLength = NativeMethods.MQTT_CreateDisconnectPacket(pBuffer, dwBufferLength);
+        if (packetLength <= 0)
+        {
+            _tcpClient.Close();
+            return false;
+        }
+
+        _tcpClient.GetStream().Write(pBuffer, 0, packetLength);
+
+        _tcpClient.Close();
+        return true;
     }
 
     private static class NativeMethods
@@ -176,5 +195,8 @@ internal class MQTTPublisher : IDisposable
 
         [DllImport("SimpleMQTTPublisher.dll")]
         internal static extern int MQTT_ParseConnectAckPacket(Byte[] pBuffer, uint dwBufferLength, ref MQTT_ConnectAckResult pResult);
+
+        [DllImport("SimpleMQTTPublisher.dll")]
+        internal static extern int MQTT_CreateDisconnectPacket(Byte[] pBuffer, uint dwBufferLength);
     }
 }

@@ -14,6 +14,7 @@ static class Program
 
             using var client = new MQTTPublisher();
             client.Connect("test.mosquitto.org", 1884);
+            client.Disconnect();
         }
         catch (ArgumentNullException e)
         {

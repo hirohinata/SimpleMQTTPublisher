@@ -11,6 +11,9 @@
     <ClCompile Include="Core\ConnectionRequest.c">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\ConnectAcknowledgement.c">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMQTTPublisher.def" />
@@ -28,6 +31,9 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\ConnectionRequest.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ConnectAcknowledgement.h">
       <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>

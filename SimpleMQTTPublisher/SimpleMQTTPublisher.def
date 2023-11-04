@@ -2,3 +2,4 @@ LIBRARY SimpleMQTTPublisher
 
 EXPORTS
     MQTT_CreateConnectPacket
+    MQTT_ParseConnectAckPacket

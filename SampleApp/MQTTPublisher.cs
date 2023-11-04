@@ -73,7 +73,17 @@ internal class MQTTPublisher : IDisposable
 
         tcpClient.GetStream().Write(pBuffer, 0, packetLength);
 
-        return true;
+        packetLength = tcpClient.GetStream().Read(pBuffer, 0, (int)dwBufferLength);
+        if (packetLength <= 0)
+        {
+            tcpClient.Close();
+            return false;
+        }
+
+        var connAckResult = new NativeMethods.MQTT_ConnectAckResult();
+        int parseLength = NativeMethods.MQTT_ParseConnectAckPacket(pBuffer, (uint)packetLength, ref connAckResult);
+        return packetLength == parseLength &&
+            connAckResult.connectReasonCode == NativeMethods.MQTT_ConnectReasonCode.Success;
     }
 
     private static class NativeMethods
@@ -116,7 +126,55 @@ internal class MQTTPublisher : IDisposable
             }
         }
 
+        internal enum MQTT_ConnectReasonCode
+        {
+            Success = 0,
+            UnspecifiedError = 128,
+            MalformedPacket = 129,
+            ProtocolError = 130,
+            ImplementationSpecificError = 131,
+            UnsupportedProtocolVersion = 132,
+            ClientIdentifierNotValid = 133,
+            BadUserNameOrPassword = 134,
+            NotAuthorized = 135,
+            ServerUnavailable = 136,
+            ServerBusy = 137,
+            Banned = 138,
+            BadAuthenticationMethod = 140,
+            TopicNameInvalid = 144,
+            PacketTooLarge = 149,
+            QuotaExceeded = 151,
+            PayloadFormatInvalid = 153,
+            RetainNotSupported = 154,
+            QoSNotSupported = 155,
+            UseAnotherServer = 156,
+            ServerMoved = 157,
+            ConnectionRateExceeded = 159,
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+        internal struct MQTT_ConnectAckResult
+        {
+            public MQTT_ConnectReasonCode connectReasonCode;
+
+            /* Boolean value (0 or 1). */
+            public byte bSessionPresent;
+
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            private byte[] reserved;
+
+            public MQTT_ConnectAckResult()
+            {
+                connectReasonCode = MQTT_ConnectReasonCode.UnspecifiedError;
+                bSessionPresent = 0;
+                reserved = new byte[3];
+            }
+        }
+
         [DllImport("SimpleMQTTPublisher.dll")]
         internal static extern int MQTT_CreateConnectPacket(Byte[] pBuffer, uint dwBufferLength, ref MQTT_ConnectPacketOption pOption);
+
+        [DllImport("SimpleMQTTPublisher.dll")]
+        internal static extern int MQTT_ParseConnectAckPacket(Byte[] pBuffer, uint dwBufferLength, ref MQTT_ConnectAckResult pResult);
     }
 }

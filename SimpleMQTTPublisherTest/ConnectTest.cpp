@@ -1,9 +1,5 @@
 #include "pch.h"
 
-#include <vector>
-#include "../SimpleMQTTPublisher/src/Connect.c"
-#include "../SimpleMQTTPublisher/src/common/Utility.c"
-
 namespace SimpleMQTTPublisherTest
 {
     TEST_CLASS(ConnectTest)

@@ -1,6 +1,5 @@
 #include "pch.h"
 
-#include <vector>
 #include "../SimpleMQTTPublisher/src/common/DataType.c"
 
 static bool operator==(const MQTT_VariableByteInteger& lhs, const MQTT_VariableByteInteger& rhs)

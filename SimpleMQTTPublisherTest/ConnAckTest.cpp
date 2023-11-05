@@ -1,8 +1,5 @@
 #include "pch.h"
 
-#include <vector>
-#include "../SimpleMQTTPublisher/src/ConnAck.c"
-
 namespace SimpleMQTTPublisherTest
 {
     TEST_CLASS(ConnAckTest)

@@ -1,7 +1,7 @@
 #include <memory.h>
-#include "ConnectionRequest.h"
-#include "ControlPacketFormat.h"
-#include "Utility.h"
+#include "Connect.h"
+#include "common/ControlPacketFormat.h"
+#include "common/Utility.h"
 
 static const unsigned char MQTT_PROTOCOL_VERSION = 5;
 

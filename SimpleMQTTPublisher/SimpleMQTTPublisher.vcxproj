@@ -19,24 +19,24 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Core\ConnectAcknowledgement.c" />
-    <ClCompile Include="Core\ConnectionRequest.c" />
-    <ClCompile Include="Core\ControlPacketFormat.c" />
-    <ClCompile Include="Core\DataType.c" />
-    <ClCompile Include="Core\DisconnectNotification.c" />
-    <ClCompile Include="Core\Utility.c" />
     <ClCompile Include="SimpleMQTTPublisher.h" />
+    <ClCompile Include="src\common\ControlPacketFormat.c" />
+    <ClCompile Include="src\common\DataType.c" />
+    <ClCompile Include="src\common\Utility.c" />
+    <ClCompile Include="src\ConnAck.c" />
+    <ClCompile Include="src\Connect.c" />
+    <ClCompile Include="src\Disconnect.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMQTTPublisher.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Core\ConnectAcknowledgement.h" />
-    <ClInclude Include="Core\ConnectionRequest.h" />
-    <ClInclude Include="Core\ControlPacketFormat.h" />
-    <ClInclude Include="Core\DataType.h" />
-    <ClInclude Include="Core\DisconnectNotification.h" />
-    <ClInclude Include="Core\Utility.h" />
+    <ClInclude Include="src\common\ControlPacketFormat.h" />
+    <ClInclude Include="src\common\DataType.h" />
+    <ClInclude Include="src\common\Utility.h" />
+    <ClInclude Include="src\ConnAck.h" />
+    <ClInclude Include="src\Connect.h" />
+    <ClInclude Include="src\Disconnect.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

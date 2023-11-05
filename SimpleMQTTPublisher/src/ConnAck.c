@@ -1,5 +1,5 @@
-#include "ConnectAcknowledgement.h"
-#include "ControlPacketFormat.h"
+#include "ConnAck.h"
+#include "common/ControlPacketFormat.h"
 
 /* 3.2.1 CONNACK Fixed Header */
 static int MQTT_ParseConnAckFixedHeader(unsigned char* pBuffer, unsigned int dwBufferLength)

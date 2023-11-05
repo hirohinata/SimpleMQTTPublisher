@@ -2,7 +2,7 @@
 #include "common/ControlPacketFormat.h"
 
 /* 3.2.1 CONNACK Fixed Header */
-static int MQTT_ParseConnAckFixedHeader(unsigned char* pBuffer, unsigned int dwBufferLength)
+static int MQTT_ParseConnAckFixedHeader(const unsigned char* pBuffer, unsigned int dwBufferLength)
 {
     MQTT_VariableByteInteger remainingLength = { 0 };
 
@@ -17,7 +17,7 @@ static int MQTT_ParseConnAckFixedHeader(unsigned char* pBuffer, unsigned int dwB
 }
 
 /* 3.2.2.3 CONNACK Properties */
-static int MQTT_ParseConnAckProperties(unsigned char* pBuffer, unsigned int dwBufferLength)
+static int MQTT_ParseConnAckProperties(const unsigned char* pBuffer, unsigned int dwBufferLength)
 {
     MQTT_VariableByteInteger propertiesLength = { 0 };
     unsigned int dwRestLength = dwBufferLength;
@@ -35,7 +35,7 @@ static int MQTT_ParseConnAckProperties(unsigned char* pBuffer, unsigned int dwBu
 }
 
 /* 3.2.2 CONNACK Variable Header */
-static int MQTT_ParseConnAckVariableHeader(unsigned char* pBuffer, unsigned int dwBufferLength, MQTT_ConnectAckResult* pResult)
+static int MQTT_ParseConnAckVariableHeader(const unsigned char* pBuffer, unsigned int dwBufferLength, MQTT_ConnectAckResult* pResult)
 {
     int iPropertiesLength = 0;
 
@@ -49,7 +49,7 @@ static int MQTT_ParseConnAckVariableHeader(unsigned char* pBuffer, unsigned int 
     return 2 + iPropertiesLength;
 }
 
-int MQTT_ParseConnectAckPacket(unsigned char* pBuffer, unsigned int dwBufferLength, MQTT_ConnectAckResult* pResult)
+int MQTT_ParseConnectAckPacket(const unsigned char* pBuffer, unsigned int dwBufferLength, MQTT_ConnectAckResult* pResult)
 {
     unsigned int dwRestLength = dwBufferLength;
 

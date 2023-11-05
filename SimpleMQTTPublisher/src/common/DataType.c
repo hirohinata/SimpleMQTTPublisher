@@ -26,9 +26,12 @@ int MQTT_DecodeTwoByteInteger(
 
 int MQTT_WriteNullTerminatedUTF8EncodedString(const char* pszString, unsigned char* pBuffer, unsigned int dwBufferLength)
 {
+    unsigned int stringLength = 0;
     MQTT_TwoByteInteger protocolNameLength = { 0 };
-    const unsigned int stringLength = (unsigned int)strlen(pszString);
 
+    if (pszString == NULL) return -1;
+
+    stringLength = (unsigned int)strlen(pszString);
     if (MQTT_EncodeTwoByteInteger(stringLength, &protocolNameLength)) return -1;
 
     if (pBuffer != NULL)

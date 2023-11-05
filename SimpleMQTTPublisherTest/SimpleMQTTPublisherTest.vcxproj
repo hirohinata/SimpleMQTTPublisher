@@ -160,6 +160,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ConnectTest.cpp" />
     <ClCompile Include="ControlPacketFormatTest.cpp" />
     <ClCompile Include="DataTypeTest.cpp" />
     <ClCompile Include="pch.cpp">

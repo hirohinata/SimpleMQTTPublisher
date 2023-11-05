@@ -2,51 +2,54 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="SimpleMQTTPublisher.h" />
-    <ClCompile Include="Core\ControlPacketFormat.c">
-      <Filter>Core</Filter>
+    <ClCompile Include="src\common\ControlPacketFormat.c">
+      <Filter>src\common</Filter>
     </ClCompile>
-    <ClCompile Include="Core\DataType.c">
-      <Filter>Core</Filter>
+    <ClCompile Include="src\common\DataType.c">
+      <Filter>src\common</Filter>
     </ClCompile>
-    <ClCompile Include="Core\ConnectionRequest.c">
-      <Filter>Core</Filter>
+    <ClCompile Include="src\common\Utility.c">
+      <Filter>src\common</Filter>
     </ClCompile>
-    <ClCompile Include="Core\ConnectAcknowledgement.c">
-      <Filter>Core</Filter>
+    <ClCompile Include="src\ConnAck.c">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Core\DisconnectNotification.c">
-      <Filter>Core</Filter>
+    <ClCompile Include="src\Connect.c">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Utility.c">
-      <Filter>Core</Filter>
+    <ClCompile Include="src\Disconnect.c">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMQTTPublisher.def" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Core">
-      <UniqueIdentifier>{50a4918e-cc79-4ecd-a788-6f39656f525d}</UniqueIdentifier>
+    <Filter Include="src">
+      <UniqueIdentifier>{37b775cf-010f-4bb3-a51e-ee11d2b138c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\common">
+      <UniqueIdentifier>{c51fa96c-2372-4a0c-91a6-67d7064025ce}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Core\ControlPacketFormat.h">
-      <Filter>Core</Filter>
+    <ClInclude Include="src\common\ControlPacketFormat.h">
+      <Filter>src\common</Filter>
     </ClInclude>
-    <ClInclude Include="Core\DataType.h">
-      <Filter>Core</Filter>
+    <ClInclude Include="src\common\DataType.h">
+      <Filter>src\common</Filter>
     </ClInclude>
-    <ClInclude Include="Core\ConnectionRequest.h">
-      <Filter>Core</Filter>
+    <ClInclude Include="src\common\Utility.h">
+      <Filter>src\common</Filter>
     </ClInclude>
-    <ClInclude Include="Core\ConnectAcknowledgement.h">
-      <Filter>Core</Filter>
+    <ClInclude Include="src\ConnAck.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Core\DisconnectNotification.h">
-      <Filter>Core</Filter>
+    <ClInclude Include="src\Connect.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Utility.h">
-      <Filter>Core</Filter>
+    <ClInclude Include="src\Disconnect.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 #include "pch.h"
 
-#include "../SimpleMQTTPublisher/Core/ControlPacketFormat.c"
+#include "../SimpleMQTTPublisher/src/common/ControlPacketFormat.c"
 
 namespace SimpleMQTTPublisherTest
 {

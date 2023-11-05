@@ -1,7 +1,8 @@
+#include <limits.h>
 #include <memory.h>
-#include "ConnectionRequest.h"
-#include "ControlPacketFormat.h"
-#include "Utility.h"
+#include "Connect.h"
+#include "common/ControlPacketFormat.h"
+#include "common/Utility.h"
 
 static const unsigned char MQTT_PROTOCOL_VERSION = 5;
 
@@ -140,12 +141,15 @@ static int MQTT_WriteConnectVariableHeader(unsigned char* pBuffer, unsigned int 
 /* 3.1.3.1 Client Identifier (ClientID) */
 static int MQTT_WriteConnectClientID(const char* pszClientID, unsigned char* pBuffer, unsigned int dwBufferLength)
 {
+    /* The ClientID MUST be present. [MQTT-3.1.3-3] */
+    if (pszClientID == NULL) return -1;
     return MQTT_WriteNullTerminatedUTF8EncodedString(pszClientID, pBuffer, dwBufferLength);
 }
 
 /* 3.1.3.5 User Name */
 static int MQTT_WriteConnectUserName(const char* pszUserName, unsigned char* pBuffer, unsigned int dwBufferLength)
 {
+    /* The User Name is optional. */
     if (pszUserName == NULL) return 0;
     return MQTT_WriteNullTerminatedUTF8EncodedString(pszUserName, pBuffer, dwBufferLength);
 }
@@ -153,6 +157,7 @@ static int MQTT_WriteConnectUserName(const char* pszUserName, unsigned char* pBu
 /* 3.1.3.6 Password */
 static int MQTT_WriteConnectPassword(const unsigned char* pPassword, unsigned short wPasswordLength, unsigned char* pBuffer, unsigned int dwBufferLength)
 {
+    /* The Password is optional. */
     if (pPassword == NULL) return 0;
     return MQTT_WriteBinaryData(pPassword, wPasswordLength, pBuffer, dwBufferLength);
 }
@@ -188,9 +193,14 @@ static int MQTT_WriteConnectPayload(unsigned char* pBuffer, unsigned int dwBuffe
 int MQTT_CreateConnectPacket(unsigned char* pBuffer, unsigned int dwBufferLength, const MQTT_ConnectPacketOption* pOption)
 {
     unsigned char* pRemainingLengthBuffer = NULL;
-    unsigned int dwRestLength = dwBufferLength;
+    unsigned int dwRestLength = 0;
 
+    /* pOption MUST NOT be NULL. */
     if (pOption == NULL) return -1;
+
+    /* If pBuffer is NULL, calculates the required buffer size. */
+    if (pBuffer == NULL) dwBufferLength = UINT_MAX;
+    dwRestLength = dwBufferLength;
 
     {
         const int iFixedHeaderLength = MQTT_WriteConnectFixedHeader(pBuffer, dwRestLength, &pRemainingLengthBuffer);

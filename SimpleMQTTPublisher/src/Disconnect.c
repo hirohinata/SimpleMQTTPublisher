@@ -1,6 +1,6 @@
-#include "DisconnectNotification.h"
-#include "ControlPacketFormat.h"
-#include "Utility.h"
+#include "Disconnect.h"
+#include "common/ControlPacketFormat.h"
+#include "common/Utility.h"
 
 /* 3.14.1 DISCONNECT Fixed Header */
 static int MQTT_WriteDisconnectFixedHeader(unsigned char* pBuffer, unsigned int dwBufferLength, unsigned char** ppRemainingLengthField)

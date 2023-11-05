@@ -8,7 +8,7 @@ namespace SimpleMQTTPublisherTest
         TEST_METHOD(BaseTest)
         {
             const unsigned char buffer[] = {
-                0x20,                                               /* MQTT Control Packet Type (2) and reserved. */
+                0x20,                                               /* MQTT Control Packet Type (CONNACK: 2) and reserved. */
                 0x03,                                               /* Remaining Length */
                 0x00,                                               /* Session Present */
                 static_cast<unsigned char>(MQTT_ConnAck_Success),   /* Connect Reason Code */

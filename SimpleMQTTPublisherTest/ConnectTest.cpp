@@ -28,7 +28,7 @@ namespace SimpleMQTTPublisherTest
             Assert::AreEqual(static_cast<int>(buffer.size()), MQTT_CreateConnectPacket(buffer.data(), static_cast<unsigned int>(buffer.size()), &option));
 
             /* Fixed Header */
-            /* 7-4bit: MQTT Control Packet type (1)
+            /* 7-4bit: MQTT Control Packet type (CONNECT: 1)
                3-0bit: Reserved (0) */
             Assert::AreEqual(static_cast<unsigned char>(0x10), buffer[0]);
 

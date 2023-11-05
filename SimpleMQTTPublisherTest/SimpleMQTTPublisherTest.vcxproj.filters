@@ -6,6 +6,7 @@
     <ClCompile Include="ControlPacketFormatTest.cpp" />
     <ClCompile Include="ConnectTest.cpp" />
     <ClCompile Include="ConnAckTest.cpp" />
+    <ClCompile Include="DisconnectTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
